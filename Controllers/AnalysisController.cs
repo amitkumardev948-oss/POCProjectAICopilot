@@ -12,9 +12,9 @@ public class AnalysisController : ControllerBase
     private readonly IAnalyzerOrchestrator _orchestrator;
     private readonly IAnalysisResultStore _resultStore;
     private readonly ILogger<AnalysisController> _logger;
-
+    //Amit changes
     public AnalysisController(
-        IGitHubClientService gitHubClientService,
+            IGitHubClientService gitHubClientService,
         IAnalyzerOrchestrator orchestrator,
         IAnalysisResultStore resultStore,
         ILogger<AnalysisController> logger)
@@ -30,7 +30,7 @@ public class AnalysisController : ControllerBase
     {
         if (request.PullRequestNumber is null && (request.BaseSha is null || request.HeadSha is null))
         {
-            return BadRequest(new
+             return BadRequest(new
             {
                 error = "Provide either pullRequestNumber, or both baseSha and headSha."
             });
@@ -42,7 +42,7 @@ public class AnalysisController : ControllerBase
 
             if (request.PullRequestNumber is { } prNumber)
             {
-                var files = await _gitHubClientService.GetPullRequestFilesAsync(
+                   var files = await _gitHubClientService.GetPullRequestFilesAsync(
                     request.Owner, request.Repo, prNumber, cancellationToken);
 
                 var (baseSha, headSha) = await _gitHubClientService.GetPullRequestShaRangeAsync(
