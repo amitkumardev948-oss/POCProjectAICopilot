@@ -1,0 +1,518 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Engineering_IntelligenceTools",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/analysis/run": {
+      "post": {
+        "tags": [
+          "Analysis"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysisRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysisRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysisRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analysis/{owner}/{repo}": {
+      "get": {
+        "tags": [
+          "Analysis"
+        ],
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pullRequestNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/webhooks/github": {
+      "post": {
+        "tags": [
+          "GitHubWebhook"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnalysisRequest": {
+        "required": [
+          "owner",
+          "repo"
+        ],
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "nullable": true
+          },
+          "repo": {
+            "type": "string",
+            "nullable": true
+          },
+          "pullRequestNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseSha": {
+            "type": "string",
+            "nullable": true
+          },
+          "headSha": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AnalysisResult": {
+        "required": [
+          "baseSha",
+          "headSha",
+          "repoName"
+        ],
+        "type": "object",
+        "properties": {
+          "repoName": {
+            "type": "string",
+            "nullable": true
+          },
+          "pullRequestNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseSha": {
+            "type": "string",
+            "nullable": true
+          },
+          "headSha": {
+            "type": "string",
+            "nullable": true
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "complexity": {
+            "$ref": "#/components/schemas/ComplexityMetrics"
+          },
+          "risk": {
+            "$ref": "#/components/schemas/RiskLevel"
+          },
+          "dependencies": {
+            "$ref": "#/components/schemas/DependencyChanges"
+          },
+          "codeSmells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CodeSmell"
+            },
+            "nullable": true
+          },
+          "impact": {
+            "$ref": "#/components/schemas/ImpactSummary"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileChangeSummary"
+            },
+            "nullable": true
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "roslynMetrics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoslynFileMetrics"
+            },
+            "nullable": true
+          },
+          "generatedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ChangeStatus": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "CodeSmell": {
+        "required": [
+          "description",
+          "file",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "nullable": true
+          },
+          "line": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "severity": {
+            "$ref": "#/components/schemas/CodeSmellSeverity"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CodeSmellSeverity": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ComplexityMetrics": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalLinesChanged": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "filesChanged": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxNestingDepthDelta": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "averageChangeSizePerFile": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DependencyChange": {
+        "required": [
+          "manifestFile",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "manifestFile": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DependencyChanges": {
+        "type": "object",
+        "properties": {
+          "added": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DependencyChange"
+            },
+            "nullable": true
+          },
+          "removed": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DependencyChange"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FileChangeSummary": {
+        "required": [
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/ChangeStatus"
+          },
+          "additions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deletions": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImpactSummary": {
+        "type": "object",
+        "properties": {
+          "filesAffected": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "criticalPathTouched": {
+            "type": "boolean"
+          },
+          "criticalFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "RiskLevel": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "RoslynFileMetrics": {
+        "required": [
+          "filePath"
+        ],
+        "type": "object",
+        "properties": {
+          "filePath": {
+            "type": "string",
+            "nullable": true
+          },
+          "cyclomaticComplexity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxNestingDepth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "methodCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "longestMethodLines": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoslynFinding"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RoslynFinding": {
+        "required": [
+          "description",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "line": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

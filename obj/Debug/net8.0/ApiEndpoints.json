@@ -1,0 +1,83 @@
+[
+  {
+    "ContainingType": "Engineering_IntelligenceTools.Controllers.AnalysisController",
+    "Method": "GetLatest",
+    "RelativePath": "api/analysis/{owner}/{repo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "owner",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "repo",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "pullRequestNumber",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Engineering_IntelligenceTools.Models.Analysis.AnalysisResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ]
+  },
+  {
+    "ContainingType": "Engineering_IntelligenceTools.Controllers.AnalysisController",
+    "Method": "Run",
+    "RelativePath": "api/analysis/run",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Engineering_IntelligenceTools.Models.Analysis.AnalysisRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Engineering_IntelligenceTools.Models.Analysis.AnalysisResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Engineering_IntelligenceTools.Controllers.GitHubWebhookController",
+    "Method": "Receive",
+    "RelativePath": "api/webhooks/github",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
