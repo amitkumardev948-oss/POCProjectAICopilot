@@ -14,7 +14,7 @@ public class AnalysisController : ControllerBase
     private readonly ILogger<AnalysisController> _logger;
     //Amit changes
     public AnalysisController(
-            IGitHubClientService gitHubClientService,
+        IGitHubClientService gitHubClientService,
         IAnalyzerOrchestrator orchestrator,
         IAnalysisResultStore resultStore,
         ILogger<AnalysisController> logger)
